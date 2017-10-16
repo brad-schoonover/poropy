@@ -1,14 +1,12 @@
-from __future__ import division
 
+
+from PyQt5.QtWidgets import QDialog, QGroupBox, QTextEdit, QVBoxLayout, QDialogButtonBox, QHBoxLayout, QLabel, QFrame, QScrollArea
 import os
 import sys
-import warnings
 import traceback
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
+import warnings
 import widgets
+
 
 class PluginControl(QDialog):
     """Base control dialog for using plugins defined in plugin.py"""
@@ -224,5 +222,5 @@ class PluginControl(QDialog):
         """
 
         frame = self.frameLayout.currentWidget()
-        for var,varDict in frame.controllerVals.iteritems():
+        for var,varDict in frame.controllerVals.items():
             setattr(frame.controller,var,varDict['ret'](varDict['widget']))

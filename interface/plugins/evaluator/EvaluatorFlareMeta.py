@@ -3,9 +3,9 @@ Created on Feb 17, 2012
 
 @author: robertsj
 '''
+import plugin
 from poropy.coretools import Reactor, Flare
 
-import plugin
 
 class EvaluatorFlareMeta(plugin.Plugin):
     """  Defines metadata for Flare

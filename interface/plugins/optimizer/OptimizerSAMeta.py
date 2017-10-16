@@ -4,14 +4,12 @@ Created on Feb 17, 2012
 @author: robertsj
 '''
 
-import sys
-
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
-from poropy.coretools.optimizer_sa import OptimizerSA
-
 import plugin
+from poropy.coretools.optimizer_sa import OptimizerSA
+import sys
+
 
 class OptimizerSAMeta(plugin.Plugin):
     """  Defines metadata for OptimizerSA

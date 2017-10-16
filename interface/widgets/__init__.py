@@ -1,6 +1,7 @@
-from coredisplay import *
-from logwatcher import *
-from plotwidget import *
-from patternlist import *
-from diagwidgets import *
+from .coredisplay import *
+from .diagwidgets import *
+from .logwatcher import *
+from .patternlist import *
+from .plotwidget import *
+
 

@@ -5,13 +5,11 @@ Created on Feb 17, 2012
 '''
 
 
+import copy
 import numpy as np
-
+import plugin
 from poropy.coretools import Reactor, Assembly, Reflector, Laban, Flare
 
-import plugin
-
-import copy
 
 class SmallCore(plugin.Plugin):
     """  Defines metadata for OptimizerGA

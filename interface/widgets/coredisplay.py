@@ -1,7 +1,7 @@
-from __future__ import division
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsItem, QGraphicsScene
+from PyQt5.QtCore import QObject, QMimeData, QMutex, Qt, QTimer
+from PyQt5.QtGui import QImage, QPainter, QPixmap, QPainterPath, QDrag
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
 L = 100 # default pixel width of assembly displays
 
@@ -29,7 +29,7 @@ class CoreDisplay(QGraphicsView):
         self.scene = QGraphicsScene(self)
         self.scene.maxZ = 0
         self.setScene(self.scene)
-        self.connect(self.scene, SIGNAL("selectionChanged()"), self.refresh)
+        #self.connect(self.scene, SIGNAL("selectionChanged()"), self.refresh)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -37,7 +37,7 @@ class CoreDisplay(QGraphicsView):
         self.draw_core()
 
         timer = QTimer(self)
-        QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
+        #QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
 
         timer.start(10)
 
@@ -56,7 +56,7 @@ class CoreDisplay(QGraphicsView):
 
     def refresh(self):
         try:
-            for item in self.scene.items():
+            for item in list(self.scene.items()):
                 if isinstance(item,AssemblyDisplay):
                     item.refresh()
         except RuntimeError: pass
@@ -141,8 +141,8 @@ class CoreDisplay(QGraphicsView):
 
 
     def assembly_swap(self,toFrom):
-
-        self.emit(SIGNAL("assemblySwapped"),toFrom)
+        pass
+        #self.emit(SIGNAL("assemblySwapped"),toFrom)
 
 
     def save_image(self,fname):

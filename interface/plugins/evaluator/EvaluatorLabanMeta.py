@@ -3,9 +3,9 @@ Created on Feb 17, 2012
 
 @author: robertsj
 '''
+import plugin
 from poropy.coretools.laban import Laban
 
-import plugin
 
 class EvaluatorLabanMeta(plugin.Plugin):
     """  Defines metadata for Laban-Pel

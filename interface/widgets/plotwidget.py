@@ -1,16 +1,13 @@
-from __future__ import division
-
-import sys
+from PyQt5.QtWidgets import QWidget, QHBoxLayout
 import datetime
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-
-import pyqtgraph as pg
+#import pyqtgraph as pg
+import sys
 
 
 class PlotWidget(QWidget):
     def __init__(self,parent=None):
+        pass
+    '''
         QWidget.__init__(self,parent)
         self.x = []
         self.y = []
@@ -63,4 +60,4 @@ class PlotWidget(QWidget):
         self.rect = self.pw.plot(x=[i], y=[y], pen=(200,200,200), symbolBrush=(255,0,0), symbolPen='w')
         
         self.refresh()
-
+'''

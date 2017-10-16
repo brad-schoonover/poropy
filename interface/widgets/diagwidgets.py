@@ -3,20 +3,16 @@
 Provides custom QWidgets for use in automatically drawn plugin dialogs
 
 """
-
-from __future__ import division
-
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QMessageBox, QProgressBar, QPushButton, QLineEdit, QToolButton, QFileDialog, QLabel
+from PyQt5.QtCore import QThread
 import os
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
 
 class LinkText(QWidget):
     def __init__(self,name,parent=None):
         QWidget.__init__(self,parent)
 
-        self.name = QString(name)
+        self.name = QLabel(name)
         self.line = QLineEdit()
     
         lay = QHBoxLayout()
@@ -24,15 +20,15 @@ class LinkText(QWidget):
 
         self.setLayout(lay)
 
-        self.connect(self.line,SIGNAL("textChanged(QString)"),self.textChanged)
-        self.connect(self.line,SIGNAL("textChanged(QString)"),self.textChanged2)
+        #self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.textChanged)
+        #self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.textChanged2)
 
     def text(self):
         return self.line.text()
-
-    @pyqtSignature("textChanged(QString,QString)")
+'''
+    @pyqtSignature("textChanged(QLabel,QLabel)")
     def textChanged(self,text):
-        self.emit(SIGNAL("textChanged(QString,QString)"),self.name,text)
+        self.emit(SIGNAL("textChanged(QLabel,QLabel)"),self.name,text)
 
     @pyqtSignature("textChanged()")
     def textChanged2(self,text):
@@ -40,7 +36,7 @@ class LinkText(QWidget):
 
     def setText(self,txt):
         self.line.setText(str(txt))
-
+'''
 
 class FileChooser(QWidget):
     def __init__(self,parent=None,directory=False,save=False):
@@ -57,27 +53,27 @@ class FileChooser(QWidget):
         layout.addWidget(self.btn)
 
         self.connect(self.btn,SIGNAL("clicked()"),self.chooser)
-        self.connect(self.line,SIGNAL("textChanged(QString)"),self.pathChanged)
+        self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.pathChanged)
 
     def chooser(self):
         if not self.dir and not self.save:
-            path = QString(QFileDialog.getOpenFileName(None, "Select file", "*"))
+            path = QLabel(QFileDialog.getOpenFileName(None, "Select file", "*"))
         elif self.save:
-            path = QString(QFileDialog.getSaveFileName(None, "Select file", "*"))
+            path = QLabel(QFileDialog.getSaveFileName(None, "Select file", "*"))
         else:
-            path = QString(QFileDialog.getExistingDirectory(None, "Select directory"))
+            path = QLabel(QFileDialog.getExistingDirectory(None, "Select directory"))
         self.line.setText(path)
-
-    @pyqtSignature("pathChanged(QString)")
+'''
+    @pyqtSignature("pathChanged(QLabel)")
     def pathChanged(self):
-        self.emit(SIGNAL("pathChanged(QString)"),self.line.text())
+        self.emit(SIGNAL("pathChanged(QLabel)"),self.line.text())
 
     def getText(self):
         return self.line.text()
 
     def setText(self,txt):
         self.line.setText(str(txt))
-
+'''
 
 
 class ProgressBarButton(QPushButton):

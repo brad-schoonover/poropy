@@ -16,15 +16,12 @@ controllers need only to interact with this model using the access functions,
 and the views will update themselves appropriately
 
 """
-
+from PyQt5.QtWidgets import QWidget
+import datetime
 import os
 import sys
 import warnings
-import datetime
-import copy
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
 class Model(QWidget):
   """Class for all interactions with the Poropy model"""
@@ -61,7 +58,7 @@ class Model(QWidget):
       return
     
     self.evaluator = evaluator.display()
-    print self.evaluator
+    print(self.evaluator)
     self.reactor.set_evaluator(evaluator)
 
     self.emit(SIGNAL("evaluatorChanged()"))

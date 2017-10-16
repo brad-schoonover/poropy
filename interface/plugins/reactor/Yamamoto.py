@@ -6,10 +6,8 @@ Created on Feb 17, 2012
 
 
 import numpy as np
-
-from poropy.coretools import Reactor, Assembly, Reflector, Flare, Laban
-
 import plugin
+from poropy.coretools import Reactor, Assembly, Reflector, Flare, Laban
 
 
 class Yamamoto(plugin.Plugin):

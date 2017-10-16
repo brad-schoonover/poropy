@@ -1,9 +1,6 @@
-from __future__ import division
-
+from PyQt5.QtWidgets import QWidget, QTextEdit, QHBoxLayout
+from PyQt5.QtCore import QObject, QTimer
 import os
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
 
 class LogWatcher(QWidget):
@@ -21,7 +18,7 @@ class LogWatcher(QWidget):
         self.setLayout(l)
 
         timer = QTimer(self)
-        QObject.connect(timer, SIGNAL("timeout()"), self.update_display)
+        #QObject.connect(timer, SIGNAL("timeout()"), self.update_display)
         timer.start(1000)
 
 

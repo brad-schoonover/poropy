@@ -1,10 +1,7 @@
-from __future__ import division
-
+from PyQt5.QtWidgets import QWidget, QTreeWidget, QHBoxLayout, QTreeWidgetItem
+from PyQt5.QtCore import QStringListModel
 import copy
 
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 
 class PatternList(QWidget):
     def __init__(self,parent=None):
@@ -21,7 +18,7 @@ class PatternList(QWidget):
         l.addWidget(self.display)
         self.setLayout(l)
 
-        self.connect(self.display,SIGNAL("itemSelectionChanged()"),self.change_pattern)
+        #self.connect(self.display,SIGNAL("itemSelectionChanged()"),self.change_pattern)
         #self.connect(self.display,SIGNAL("itemClicked(QTreeWidgetItem*,int)"),self.checkbox_clicked)
 
 
@@ -40,7 +37,7 @@ class PatternList(QWidget):
 
 
     def add_pattern(self,i,timestamp,pattern,keff,maxpeak,objective):
-        strlst = QStringList()
+        strlst = QStringListModel()
         strlst.append(str(timestamp))
         strlst.append(str(maxpeak))
         strlst.append(str(keff))
@@ -57,7 +54,7 @@ class PatternList(QWidget):
     def change_pattern(self):
         try:
           data = self.display.selectedItems()[0].data(0,32)
-          self.emit(SIGNAL("patternChanged(QVariant)"),data)
+          #self.emit(SIGNAL("patternChanged(QVariant)"),data)
         except IndexError: pass # selection was changed to nothing
         
     def clear(self):
