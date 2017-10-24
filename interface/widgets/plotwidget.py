@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
 import datetime
+from graph import Chart
 #import pyqtgraph as pg
 import sys
 
 
-class PlotWidget(QWidget):
-    def __init__(self,parent=None):
-        pass
+class PlotWidget(Chart):
+    def __init__(self):
+        super(PlotWidget,self).__init__()
+        
     '''
         QWidget.__init__(self,parent)
         self.x = []
@@ -19,7 +21,7 @@ class PlotWidget(QWidget):
         self.setLayout(l)
         
         self.rect = None
-
+    
     def add_point(self,y,x=None):
         
         self.y.append(y)
