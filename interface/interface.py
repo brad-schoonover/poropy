@@ -121,6 +121,9 @@ class MainWindow(QMainWindow):
         #self.connect(self.coreDisplay,SIGNAL("assemblySwapped"),self.assembly_swap)
         ##self.triggered.connect(self.assembly_swap)
         #self.connect(self.allPatterns,SIGNAL("patternChanged(QVariant)"),self.change_pattern)
+        
+        self.closed = pyqtSignal()
+        self.closed.trigger.connect(self.assembly_swap)
 
         # connections to the model
 
