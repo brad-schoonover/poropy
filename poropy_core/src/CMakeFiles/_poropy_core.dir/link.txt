@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -Wall -std=gnu++0x -g  -shared  -o _poropy_core.so CMakeFiles/_poropy_core.dir/poropyPYTHON_wrap.cxx.o -lpython3.5 libporopy_core.so -Wl,-rpath,/home/brad/workspace/seniorProjoct/poropy/poropy_core/src 

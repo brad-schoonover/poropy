@@ -1,0 +1,25 @@
+#ifndef POROPY_CONFIG_H_
+#define POROPY_CONFIG_H_
+
+// design by contract level 
+#cmakedefine POROPY_ENABLE_DBC
+
+// debug output
+#cmakedefine POROPY_ENABLE_DEBUG
+
+// testing
+#cmakedefine POROPY_ENABLE_TEST
+
+// date of compilation
+#cmakedefine POROPY_COMPILED_M ${POROPY_COMPILED_M}
+#cmakedefine POROPY_COMPILED_D ${POROPY_COMPILED_D}
+#cmakedefine POROPY_COMPILED_Y ${POROPY_COMPILED_Y}
+
+// git revision
+#define POROPY_GIT_SHA1 "${POROPY_WC_REVISION_HASH}"
+
+#endif // POROPY_CONFIG_H_ 
+
+//---------------------------------------------------------------------------//
+//              end of poropy_config.h.in
+//---------------------------------------------------------------------------//

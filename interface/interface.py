@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from PyQt5.QtWidgets import QMenuBar, QMenu, QMainWindow, QAction, QSplitter, QMessageBox, QApplication, QHBoxLayout, QTabWidget
-from PyQt5.QtCore import QObject, Qt
+from PyQt5.QtCore import QObject, Qt, pyqtSignal
 import copy
 from model import Model
 import numpy as np
@@ -31,30 +31,38 @@ class MainWindow(QMainWindow):
 
         self.menuFile = QMenu("&File",self.menubar)
         self.actionBuild = QAction("Build &Core",self)
-        #self.connect(self.actionBuild, SIGNAL("triggered()"), self.build_core)
+        self.actionBuild.triggered.connect(self.build_core)
+        #self.connect(self.actionBuild, pyqtSignal("triggered()"), self.build_core)
         self.actionSaveImg = QAction("Save Core &Image",self)
+        self.actionSaveImg.triggered.connect(self.save_img)
         #self.connect(self.actionSaveImg, SIGNAL("triggered()"), self.save_img)
         self.actionExit = QAction("E&xit",self)
+        self.actionExit.triggered.connect(self.close)
         #self.connect(self.actionExit, SIGNAL("triggered()"), self.close)
         self.menuFile.addActions([self.actionBuild,self.actionSaveImg,self.actionExit])
         self.menuFile.insertSeparator(self.actionExit)
 
         self.menuSettings = QMenu("&Settings",self.menubar)
         self.actionEval = QAction("&Evaluator Settings",self)
+        self.actionEval.triggered.connect(self.evaluator_settings)
         #self.connect(self.actionEval, SIGNAL("triggered()"), self.evaluator_settings)
         self.actionObjective = QAction("&Objective Settings",self)
+        self.actionObjective.triggered.connect(self.objective_settings)
         #self.connect(self.actionObjective, SIGNAL("triggered()"), self.objective_settings)
         self.actionCore = QAction("&Core Display Settings",self)
+        self.actionCore.triggered.connect(self.core_display_settings)
         #self.connect(self.actionCore, SIGNAL("triggered()"), self.core_display_settings)
         self.menuSettings.addActions([self.actionEval,self.actionObjective,self.actionCore])
 
         self.menuTools = QMenu("&Tools",self.menubar)
         self.actionOptimize = QAction("&Run Optimization",self)
+        self.actionOptimize.triggered.connect(self.run_optimization)
         #self.connect(self.actionOptimize, SIGNAL("triggered()"), self.run_optimization)
         self.menuTools.addActions([self.actionOptimize])
 
         self.menuHelp = QMenu("&Help",self.menubar)
         self.actionAbout = QAction("&About",self)
+        self.actionAbout.triggered.connect(self.about)
         #self.connect(self.actionAbout, SIGNAL("triggered()"), self.about)
         self.menuHelp.addActions([self.actionAbout])
 
@@ -111,6 +119,7 @@ class MainWindow(QMainWindow):
         # connections to the views
 
         #self.connect(self.coreDisplay,SIGNAL("assemblySwapped"),self.assembly_swap)
+        ##self.triggered.connect(self.assembly_swap)
         #self.connect(self.allPatterns,SIGNAL("patternChanged(QVariant)"),self.change_pattern)
 
         # connections to the model

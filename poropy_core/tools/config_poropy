@@ -1,0 +1,9 @@
+# Configure Poropy
+rm CMakeCache.txt
+cmake                                                               \
+-G "Eclipse CDT4 - Unix Makefiles"                                  \
+-D CMAKE_BUILD_TYPE=Debug                                           \
+-D POROPY_ENABLE_DBC=YES                                            \
+-D POROPY_ENABLE_TEST=YES                                           \
+-D CMAKE_INSTALL_PREFIX=/home/brad/workspace/seniorProjoct/poropy/poropy_core/install \
+/home/brad/workspace/seniorProjoct/poropy/poropy_core/source

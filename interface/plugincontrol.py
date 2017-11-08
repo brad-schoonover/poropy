@@ -1,6 +1,6 @@
 
 
-from PyQt5.QtWidgets import QDialog, QGroupBox, QTextEdit, QVBoxLayout, QDialogButtonBox, QHBoxLayout, QLabel, QFrame, QScrollArea
+from PyQt5.QtWidgets import QDialog, QGroupBox, QTextEdit, QVBoxLayout, QDialogButtonBox, QHBoxLayout, QLabel, QFrame, QScrollArea, QListWidget, QSizePolicy, QStackedLayout
 import os
 import sys
 import traceback
@@ -30,8 +30,9 @@ class PluginControl(QDialog):
         self.pluginList.addItem("Help")
         desc = QGroupBox('Core Builder')
         desc.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Minimum)
-        self.help = QTextEdit(defaultHelp)
-        self.help.setReadOnly(True)
+        self.help = QLabel(self)
+        self.set_help(defaultHelp)
+        #self.help.setReadOnly(True)
         dLayout = QVBoxLayout()
         dLayout.addWidget(self.help)
         desc.setLayout(dLayout)
@@ -60,8 +61,8 @@ class PluginControl(QDialog):
 
         self.setLayout(mainLayout)
 
-        self.connect(closeButton, SIGNAL("rejected()"), self.accept)
-        self.connect(self.pluginList,SIGNAL("currentRowChanged(int)"),self.frameLayout,SLOT("setCurrentIndex(int)"))
+        #self.connect(closeButton, SIGNAL("rejected()"), self.accept)
+        #self.connect(self.pluginList,SIGNAL("currentRowChanged(int)"),self.frameLayout,SLOT("setCurrentIndex(int)"))
 
 
         ### populate panels for each core plugin
@@ -97,7 +98,7 @@ class PluginControl(QDialog):
 
 
     def set_help(self,helpString):
-        self.help.setText(QString(helpString))
+        self.help.setText(helpString)
 
     def get_control_frame(self,controller):
         
