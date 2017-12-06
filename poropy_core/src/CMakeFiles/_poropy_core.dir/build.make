@@ -60,7 +60,7 @@ include src/CMakeFiles/_poropy_core.dir/flags.make
 src/poropyPYTHON_wrap.cxx: src/poropy.i
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/brad/workspace/seniorProjoct/poropy/poropy_core/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Swig source"
 	cd /home/brad/workspace/seniorProjoct/poropy/poropy_core/src && /usr/bin/cmake -E make_directory /home/brad/workspace/seniorProjoct/poropy/poropy_core/src
-	cd /home/brad/workspace/seniorProjoct/poropy/poropy_core/src && /usr/bin/swig3.0 -python -v -outdir /home/brad/workspace/seniorProjoct/poropy/poropy_core/src -c++ -I/home/brad/opt/conda/include/python3.5 -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/config -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/src -o /home/brad/workspace/seniorProjoct/poropy/poropy_core/src/poropyPYTHON_wrap.cxx /home/brad/workspace/seniorProjoct/poropy/poropy_core/src/poropy.i
+	cd /home/brad/workspace/seniorProjoct/poropy/poropy_core/src && /usr/bin/swig3.0 -python -v -outdir /home/brad/workspace/seniorProjoct/poropy/poropy_core/src -c++ -I/home/brad/opt/conda/envs/poro3/include/python3.4m -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/config -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/src -o /home/brad/workspace/seniorProjoct/poropy/poropy_core/src/poropyPYTHON_wrap.cxx /home/brad/workspace/seniorProjoct/poropy/poropy_core/src/poropy.i
 
 src/poropy_core.py: src/poropyPYTHON_wrap.cxx
 	@$(CMAKE_COMMAND) -E touch_nocreate src/poropy_core.py
@@ -98,7 +98,7 @@ _poropy_core_EXTERNAL_OBJECTS =
 
 src/_poropy_core.so: src/CMakeFiles/_poropy_core.dir/poropyPYTHON_wrap.cxx.o
 src/_poropy_core.so: src/CMakeFiles/_poropy_core.dir/build.make
-src/_poropy_core.so: /usr/lib/x86_64-linux-gnu/libpython3.5.so
+src/_poropy_core.so: /home/brad/opt/conda/envs/poro3/lib/libpython3.4m.so
 src/_poropy_core.so: src/libporopy_core.so
 src/_poropy_core.so: src/CMakeFiles/_poropy_core.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/brad/workspace/seniorProjoct/poropy/poropy_core/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX shared module _poropy_core.so"

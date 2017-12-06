@@ -5,7 +5,7 @@ core fuel temperature coefficient.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from poropy_core import *
+from poropy_core.src.poropy_core import Core, SimpleDataModel, FlareSolver, Assembly, ParamDB
 
 stencil = [[  0,  1,  2,  3,  4,  5,  6,  7, -1],
            [ -2,  8,  9, 10, 11, 12, 13, 14, -1],
@@ -59,36 +59,37 @@ solver.set_temperatures([TF1]*49, [580.]*49)
 # exit('lala')
 
 solver.solve()
-print(solver.fuel_temperature())
-print(solver.moderator_temperature())
+#print((solver.fuel_temperature()))
+#print((solver.moderator_temperature()))
+print("finish import")
 
-exit()
+#exit()
 
 
-keff1 = solver.cycle_keff(); 
-bu1 = solver.cycle_core_burnup()
-mappf1 = solver.cycle_max_appf()
-boron1 = solver.cycle_boron()
-print(solver.fuel_temperature())
+#keff1 = solver.cycle_keff(); 
+#bu1 = solver.cycle_core_burnup()
+#mappf1 = solver.cycle_max_appf()
+#boron1 = solver.cycle_boron()
+#print((solver.fuel_temperature()))
 #plt.figure(1)
 #plt.plot(bu1, keff1)
 
-exit('lala')
+#exit('lala')
 
-TF2 = 950.0
-solver.set_temperatures([TF2]*49, [580.]*49)
-solver.solve_cycle()
-keff2 = solver.cycle_keff(); 
-bu2 = solver.cycle_core_burnup()
-mappf2 = solver.cycle_max_appf()
-boron2 = solver.cycle_boron()
+#TF2 = 950.0
+#solver.set_temperatures([TF2]*49, [580.]*49)
+#solver.solve_cycle()
+#keff2 = solver.cycle_keff(); 
+#bu2 = solver.cycle_core_burnup()
+#mappf2 = solver.cycle_max_appf()
+#boron2 = solver.cycle_boron()
 #plt.figure(2)
 #plt.plot(bu2, keff2)
 
-plt.figure(3)
-alpha = 1.e5 * 1./np.array(keff1) * (np.array(keff2)-np.array(keff1))/(TF2-TF1)
-plt.plot(bu1, alpha)
-plt.xlabel('burnup (GWd/MTU)')
-plt.ylabel('$\\alpha^F_T$ (pcm/K)')
-plt.grid(True)
-plt.show()
+#plt.figure(3)
+#alpha = 1.e5 * 1./np.array(keff1) * (np.array(keff2)-np.array(keff1))/(TF2-TF1)
+#plt.plot(bu1, alpha)
+#plt.xlabel('burnup (GWd/MTU)')
+#plt.ylabel('$\\alpha^F_T$ (pcm/K)')
+#plt.grid(True)
+#plt.show()

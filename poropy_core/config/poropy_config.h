@@ -12,7 +12,7 @@
 
 // date of compilation
 #define POROPY_COMPILED_M 11
-#define POROPY_COMPILED_D 6
+#define POROPY_COMPILED_D 29
 #define POROPY_COMPILED_Y 2017
 
 // git revision

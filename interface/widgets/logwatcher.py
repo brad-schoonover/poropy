@@ -18,7 +18,6 @@ class LogWatcher(QWidget):
         self.setLayout(l)
 
         timer = QTimer(self)
-        #QObject.connect(timer, SIGNAL("timeout()"), self.update_display)
         timer.start(1000)
 
 

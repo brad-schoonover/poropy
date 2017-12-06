@@ -18,10 +18,6 @@ class PatternList(QWidget):
         l.addWidget(self.display)
         self.setLayout(l)
 
-        #self.connect(self.display,SIGNAL("itemSelectionChanged()"),self.change_pattern)
-        #self.connect(self.display,SIGNAL("itemClicked(QTreeWidgetItem*,int)"),self.checkbox_clicked)
-
-
     #def checkbox_clicked(self,item,col):
     #    if col != 4: return
     #    if item.checkState(col) == Qt.Checked:
@@ -54,7 +50,6 @@ class PatternList(QWidget):
     def change_pattern(self):
         try:
           data = self.display.selectedItems()[0].data(0,32)
-          #self.emit(SIGNAL("patternChanged(QVariant)"),data)
         except IndexError: pass # selection was changed to nothing
         
     def clear(self):

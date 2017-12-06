@@ -16,10 +16,7 @@ controllers need only to interact with this model using the access functions,
 and the views will update themselves appropriately
 
 """
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-import copy
+from PyQt5.QtWidgets import QWidget
 import datetime
 import os
 import sys
@@ -61,7 +58,7 @@ class Model(QWidget):
       return
     
     self.evaluator = evaluator.display()
-    print self.evaluator
+    print((self.evaluator))
     self.reactor.set_evaluator(evaluator)
 
     self.emit(SIGNAL("evaluatorChanged()"))

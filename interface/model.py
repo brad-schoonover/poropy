@@ -43,7 +43,6 @@ class Model(QWidget):
   def set_reactor(self,reactor):
     self.reactor = reactor
     self.pattern_history = []
-    self.emit(SIGNAL("reactorChanged()"))
   
   def get_reactor(self):
     return self.reactor
@@ -58,10 +57,9 @@ class Model(QWidget):
       return
     
     self.evaluator = evaluator.display()
-    print(self.evaluator)
+    print((self.evaluator))
     self.reactor.set_evaluator(evaluator)
 
-    self.emit(SIGNAL("evaluatorChanged()"))
   
   def get_evaluator(self):
     return self.evaluator
@@ -94,7 +92,6 @@ class Model(QWidget):
 
   def swap_assemblies(self, pos1, pos2):
     self.reactor.swap(pos1,pos2)
-    self.emit(SIGNAL("patternChanged()"))
 
   def evaluate_reactor(self):
     cwd = os.getcwd()
@@ -108,7 +105,6 @@ class Model(QWidget):
                                  'objective': self.objective(keff,maxpeak)})
     self.current_pattern = len(self.pattern_history) - 1
     
-    self.emit(SIGNAL("reactorEvaluated()"))
 
   def change_to_pattern(self, i):
     if i < 0 or i > len(self.pattern_history):
@@ -118,7 +114,6 @@ class Model(QWidget):
     
     self.current_pattern = i
     
-    self.emit(SIGNAL("patternChanged()"))
     
 ################################################################################
 # Slots for the optimizers
@@ -132,9 +127,6 @@ class Model(QWidget):
                                  'objective':obj})
     self.current_pattern = len(self.pattern_history) - 1
     
-    self.emit(SIGNAL("reactorEvaluated()"))
-    self.emit(SIGNAL("patternChanged()"))
-
 
 def default_objective(k, p):
     """  Default objective function.

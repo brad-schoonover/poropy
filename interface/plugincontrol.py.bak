@@ -1,7 +1,6 @@
-from __future__ import division
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+
+from PyQt5.QtWidgets import QDialog, QGroupBox, QTextEdit, QVBoxLayout, QDialogButtonBox, QHBoxLayout, QLabel, QFrame, QScrollArea, QListWidget, QSizePolicy, QStackedLayout
 import os
 import sys
 import traceback
@@ -31,8 +30,9 @@ class PluginControl(QDialog):
         self.pluginList.addItem("Help")
         desc = QGroupBox('Core Builder')
         desc.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Minimum)
-        self.help = QTextEdit(defaultHelp)
-        self.help.setReadOnly(True)
+        self.help = QLabel(self)
+        self.set_help(defaultHelp)
+        #self.help.setReadOnly(True)
         dLayout = QVBoxLayout()
         dLayout.addWidget(self.help)
         desc.setLayout(dLayout)
@@ -61,13 +61,15 @@ class PluginControl(QDialog):
 
         self.setLayout(mainLayout)
 
-        self.connect(closeButton, SIGNAL("rejected()"), self.accept)
-        self.connect(self.pluginList,SIGNAL("currentRowChanged(int)"),self.frameLayout,SLOT("setCurrentIndex(int)"))
+        #self.connect(closeButton, SIGNAL("rejected()"), self.accept)
+        #self.connect(self.pluginList,SIGNAL("currentRowChanged(int)"),self.frameLayout,SLOT("setCurrentIndex(int)"))
 
 
         ### populate panels for each core plugin
 
         sys.path.append(self.pluginDir) # add this util directory to python path
+        
+        print((os.walk(self.pluginDir)))
 
         for root, dirs, files in os.walk(self.pluginDir):
             for f in files:
@@ -98,7 +100,7 @@ class PluginControl(QDialog):
 
 
     def set_help(self,helpString):
-        self.help.setText(QString(helpString))
+        self.help.setText(helpString)
 
     def get_control_frame(self,controller):
         
@@ -223,5 +225,5 @@ class PluginControl(QDialog):
         """
 
         frame = self.frameLayout.currentWidget()
-        for var,varDict in frame.controllerVals.iteritems():
+        for var,varDict in list(frame.controllerVals.items()):
             setattr(frame.controller,var,varDict['ret'](varDict['widget']))

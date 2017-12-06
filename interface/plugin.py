@@ -45,7 +45,6 @@ class Plugin(QObject):
             The implementing widget in widget.py (ProgressBarButton) assumes progress goes from 0 to 100        
 
         """
-        self.emit(SIGNAL("progressChanged(int)"),p)
 
     @pyqtSignature("cancel()")
     def cancel(self):
@@ -58,5 +57,4 @@ class Plugin(QObject):
         self.cancel = True
         
     def close_plugin_diag(self):
-        self.emit(SIGNAL("closePluginDiag()"))
 

@@ -1,10 +1,9 @@
-from __future__ import division
+from PyQt5.QtWidgets import QGraphicsView, QGraphicsItem, QGraphicsScene, QAction
+from PyQt5.QtCore import QObject, QMimeData, QMutex, Qt, QTimer
+from PyQt5.QtGui import QImage, QPainter, QPixmap, QPainterPath, QDrag
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+L = 100  # default pixel width of assembly displays
 
-
-L = 100 # default pixel width of assembly displays
 
 class CoreDisplay(QGraphicsView):
 
@@ -13,8 +12,8 @@ class CoreDisplay(QGraphicsView):
     COLOR_POWER = 2
     COLOR_KINF = 3
 
-    def __init__(self,reactor,parent=None):
-        QGraphicsView.__init__(self,parent)
+    def __init__(self, reactor, parent=None):
+        QGraphicsView.__init__(self, parent)
         
         if reactor == None:
           self.core = None
@@ -30,7 +29,7 @@ class CoreDisplay(QGraphicsView):
         self.scene = QGraphicsScene(self)
         self.scene.maxZ = 0
         self.setScene(self.scene)
-        self.connect(self.scene, SIGNAL("selectionChanged()"), self.refresh)
+        # self.connect(self.scene, SIGNAL("selectionChanged()"), self.refresh)
 
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -38,14 +37,17 @@ class CoreDisplay(QGraphicsView):
         self.draw_core()
 
         timer = QTimer(self)
-        QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
+        # QObject.connect(timer, SIGNAL("timeout()"), self.draw_core)
 
         timer.start(10)
+        
+        #creating an action for swamping
+        self.assembly_swap_action = QAction("Action", self)
 
-    def set_coloring(self,coloring):
+    def set_coloring(self, coloring):
         self.coloring = coloring
 
-    def set_core(self,core):
+    def set_core(self, core):
         self.core = core
         self.needsRefresh = True
 
@@ -53,15 +55,14 @@ class CoreDisplay(QGraphicsView):
         self.needsRefresh = True
 
     def resizeEvent(self, event):
-        self.fitInView(self.scene.sceneRect(),Qt.KeepAspectRatio)
+        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
 
     def refresh(self):
         try:
-            for item in self.scene.items():
-                if isinstance(item,AssemblyDisplay):
+            for item in list(self.scene.items()):
+                if isinstance(item, AssemblyDisplay):
                     item.refresh()
         except RuntimeError: pass
-
 
     def draw_core(self):
         if not self.needsRefresh: return
@@ -77,16 +78,16 @@ class CoreDisplay(QGraphicsView):
         # map positions onto (row,col) for easier plotting
         mapped_pattern_ids = {}
         i = 0
-        for r,row in enumerate(self.core.stencil):
-            for c,assType in enumerate(row):
-                if r != 0 and c == 0: # if on reflected surface
-                    mapped_pattern_ids[r,c] = mapped_pattern_ids[0,r]
+        for r, row in enumerate(self.core.stencil):
+            for c, assType in enumerate(row):
+                if r != 0 and c == 0:  # if on reflected surface
+                    mapped_pattern_ids[r, c] = mapped_pattern_ids[0, r]
                 else:
                     if assType != 0:
-                        mapped_pattern_ids[r,c] = self.core.pattern[i]
+                        mapped_pattern_ids[r, c] = self.core.pattern[i]
                         i += 1
                     else:
-                        mapped_pattern_ids[r,c] = -1 # reflector
+                        mapped_pattern_ids[r, c] = -1  # reflector
 
         numRows = len(self.core.stencil)
         numCols = len(self.core.stencil[0])
@@ -94,10 +95,10 @@ class CoreDisplay(QGraphicsView):
         peaks = []
 
         i = 0
-        for r,row in enumerate(self.core.stencil):
-            for c,assType in enumerate(row):
-                patt_id = mapped_pattern_ids[r,c]
-                if r != 0 and c == 0:    # if on reflected surface
+        for r, row in enumerate(self.core.stencil):
+            for c, assType in enumerate(row):
+                patt_id = mapped_pattern_ids[r, c]
+                if r != 0 and c == 0:  # if on reflected surface
                     a = self.core.assemblies[patt_id]
                     if patt_id == -1:
                         a.name = "R"
@@ -105,74 +106,76 @@ class CoreDisplay(QGraphicsView):
                     else:
                         a.name = patt_id
                         type_ = "reflected surface"
-                    ass = AssemblyDisplay(r,c,a,type_,self,scene=self.scene,
+                    ass = AssemblyDisplay(r, c, a, type_, self, scene=self.scene,
                                           coloring=self.coloring)
-                    peaks.append((a.peak,ass))
+                    peaks.append((a.peak, ass))
 
                 else:
 
                     if patt_id == -1:
                         a = self.core.reflector
                         a.name = "R"
-                        ass = AssemblyDisplay(r,c,a,"reflector",self,
+                        ass = AssemblyDisplay(r, c, a, "reflector", self,
                                               scene=self.scene,
                                               coloring=self.coloring)
-                        peaks.append((a.peak,ass))
+                        peaks.append((a.peak, ass))
                     else:
                         a = self.core.assemblies[patt_id]
                         a.name = patt_id
-                        ass = AssemblyDisplay(r,c,a,"fuel",self,
+                        ass = AssemblyDisplay(r, c, a, "fuel", self,
                                               scene=self.scene,
                                               coloring=self.coloring)
-                        peaks.append((a.peak,ass))
+                        peaks.append((a.peak, ass))
                         i += 1
 
-                self.connect(ass.sigFire,SIGNAL("assemblySwapped"),
+                self.connect(ass.sigFire, SIGNAL("assemblySwapped"),
                              self.assembly_swap)
 
         maxPeaker = max(peaks)[1]
         maxPeaker.set_coloring(max_peak=True)
 
-        m = 20 # pixel margin
-        self.scene.setSceneRect(-m,-m,numCols*L+2*m,numRows*L+2*m)
+        m = 20  # pixel margin
+        self.scene.setSceneRect(-m, -m, numCols * L + 2 * m, numRows * L + 2 * m)
 
-        self.fitInView(self.scene.sceneRect(),Qt.KeepAspectRatio)
+        self.fitInView(self.scene.sceneRect(), Qt.KeepAspectRatio)
 
         self.mutex.unlock()
 
+        trigger = pyqtSignal()
+        
+    def assembly_swap(self, toFrom):
+        print("hey I emitted")
+        self.trigger.emit("assemblySwapped", toFrom)
+        # self.emit("assemblySwapped",toFrom)
 
-    def assembly_swap(self,toFrom):
-
-        self.emit(SIGNAL("assemblySwapped"),toFrom)
-
-
-    def save_image(self,fname):
-      img = QImage(self.scene.width(),self.scene.height(),QImage.Format_ARGB32_Premultiplied)
+    def save_image(self, fname):
+      img = QImage(self.scene.width(), self.scene.height(), QImage.Format_ARGB32_Premultiplied)
       p = QPainter(img)
       self.scene.render(p)
       p.end()
       img.save(fname)
 
-class AssemblyDisplay(QGraphicsItem):
-    def __init__(self,r,c,ass,type_,view,parent=None,scene=None,coloring=None,
-                 max_peak=False):
-        QGraphicsItem.__init__(self,parent,scene)
 
-        self.loc = [r,c]
+class AssemblyDisplay(QGraphicsItem):
+
+    def __init__(self, r, c, ass, type_, view, parent=None, scene=None, coloring=None,
+                 max_peak=False):
+        QGraphicsItem.__init__(self, parent, scene)
+
+        self.loc = [r, c]
         self.assembly = ass
         self.type = type_
         self.view = view
 
         self.sigFire = SignalFire()
 
-        self.coloring=coloring
+        self.coloring = coloring
 
         self.set_coloring(max_peak=max_peak)
 
         self.draw_item()
 
-
-    def set_coloring(self,max_peak=False):
+    def set_coloring(self, max_peak=False):
     
         if self.type == "fuel" or self.type == "reflected surface":
         
@@ -189,13 +192,13 @@ class AssemblyDisplay(QGraphicsItem):
                 r = self.assembly.burnup
                 rc = 50.0
             elif self.coloring == CoreDisplay.COLOR_KINF:
-                r = 2.0*(self.assembly.KINF - 0.75)
+                r = 2.0 * (self.assembly.KINF - 0.75)
                 rc = 1.5
 
             if r >= rc:
                 self.defaultColor = Qt.red
             else:
-                self.defaultColor = QColor(r/rc*255,(rc-r)/rc*255,0)
+                self.defaultColor = QColor(r / rc * 255, (rc - r) / rc * 255, 0)
 
             if self.type == "fuel":
                 self.setFlags(QGraphicsItem.ItemIsSelectable)
@@ -207,25 +210,23 @@ class AssemblyDisplay(QGraphicsItem):
         else:
             self.defaultColor = Qt.white
 
-
     def draw_item(self):
 
         self.color = self.defaultColor
         self.path = QPainterPath()
-        points = [(0,0),(0,L),(L,L),(L,0)]
-        self.path.addPolygon(QPolygonF([QPointF(x,y) for x,y in points]))
+        points = [(0, 0), (0, L), (L, L), (L, 0)]
+        self.path.addPolygon(QPolygonF([QPointF(x, y) for x, y in points]))
         self.path.closeSubpath()
         self.make_labels()
-        self.translate(self.loc[1]*L,self.loc[0]*L)
+        self.translate(self.loc[1] * L, self.loc[0] * L)
 
         s = self.get_scale()
         s = 1
-        self.pixmap = QPixmap(L*s,L*s)
+        self.pixmap = QPixmap(L * s, L * s)
         self.pixpainter = QPainter(self.pixmap)
         rect = self.boundingRect()
-        rect.translate(self.loc[1]*L,self.loc[0]*L)
-        self.scene().render(self.pixpainter,QRectF(0,0,L*s,L*s),rect)
-
+        rect.translate(self.loc[1] * L, self.loc[0] * L)
+        self.scene().render(self.pixpainter, QRectF(0, 0, L * s, L * s), rect)
 
     def make_labels(self):
         id_ = QGraphicsTextItem(parent=self)
@@ -260,11 +261,10 @@ class AssemblyDisplay(QGraphicsItem):
         id_.setHtml(text)
         id_.setTextWidth(L)
 
-
     def get_scale(self):
-        sy = self.view.height()/self.scene().height()
-        sx =  self.view.width()/self.scene().width()
-        return min([sx,sy])
+        sy = self.view.height() / self.scene().height()
+        sx = self.view.width() / self.scene().width()
+        return min([sx, sy])
 
     def boundingRect(self):
         return self.path.boundingRect()
@@ -305,7 +305,7 @@ class AssemblyDisplay(QGraphicsItem):
         from_ = event.mimeData().assembly.loc
         to = self.loc
         if from_ != to:
-            self.sigFire.fireSwap(to,from_)
+            self.sigFire.fireSwap(to, from_)
 
     def mousePressEvent(self, event):
         if not self.type == "fuel": return
@@ -322,18 +322,19 @@ class AssemblyDisplay(QGraphicsItem):
         mime.assembly = self
         drag.setMimeData(mime)
         s = self.get_scale()
-        drag.setPixmap(self.pixmap.scaledToWidth(L*s))
-        drag.setHotSpot(QPoint(event.pos().x()*s,event.pos().y()*s))
+        drag.setPixmap(self.pixmap.scaledToWidth(L * s))
+        drag.setHotSpot(QPoint(event.pos().x() * s, event.pos().y() * s))
         drag.start()
-
 
     def mouseReleaseEvent(self, event):
         if not self.type == "fuel": return
 
 
 class SignalFire(QObject):
-    def __init__(self,parent=None):
-        QObject.__init__(self,parent)
-    def fireSwap(self,to,from_):
-        self.emit(SIGNAL("assemblySwapped"),[from_,to])
+
+    def __init__(self, parent=None):
+        QAction.__init__(self, parent)
+
+    def fireSwap(self, to, from_):
+        self.emit(SIGNAL("assemblySwapped"), [from_, to])
 

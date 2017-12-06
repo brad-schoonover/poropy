@@ -78,13 +78,13 @@ data = FlareData()
 data2 = TwoGroupData()
 
 model2.update_data(assemblies[0], 0.0, 900, 580.0, 0.0, data)
-print(data.kinf)
+print((data.kinf))
 model2.update_data(assemblies[0], 0.0, 900, 580.0, 0.0, data2)
-print(data2.D1)
+print((data2.D1))
 exit('lala')
 for i in range(49) :
   model.update_data(assemblies[i], 0.0, 900.0, 580.0, 0.0, data)
-  print("i = ", i,  " kinf = ", data.migration_area)
+  print(("i = ", i,  " kinf = ", data.migration_area))
 
 
 solver = FlareSolver(db, core, model2, 3400.0)
@@ -94,5 +94,5 @@ s = np.asarray(solver.assembly_powers())
 mean_s = (0.25*s[0] + sum(s[1:49])) / (0.25 +49.-1.)
 appf = s / mean_s
 core.print_assembly_map(vec_dbl(appf), "lala")
-print(core.pattern())
-print("all done, keff = ", solver.keff())
+print((core.pattern()))
+print(("all done, keff = ", solver.keff()))

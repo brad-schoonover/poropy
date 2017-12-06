@@ -6,5 +6,5 @@ CXX_FLAGS =  -Wall -std=gnu++0x -g
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/brad/opt/conda/include/python3.5 -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/config -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/src 
+CXX_INCLUDES = -I/home/brad/opt/conda/envs/poro3/include/python3.4m -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/config -I/home/brad/workspace/seniorProjoct/poropy/poropy_core/src 
 

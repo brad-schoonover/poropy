@@ -19,7 +19,7 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/home/brad/opt/conda/include/python3.5"
+  "/home/brad/opt/conda/envs/poro3/include/python3.4m"
   "config"
   "src"
   )

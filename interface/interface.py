@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 
-from PyQt5.QtWidgets import QMenuBar, QMenu, QMainWindow, QAction, QSplitter, QMessageBox, QApplication, QHBoxLayout, QTabWidget
+from PyQt5.QtWidgets import QMenuBar, QMenu, QMainWindow, QAction, QSplitter, QMessageBox, QApplication, QHBoxLayout, QTabWidget, QFileDialog
 from PyQt5.QtCore import QObject, Qt, pyqtSignal
 import copy
-from model import Model
+from interface.model import Model
 import numpy as np
 import os
 import platform
-from plugincontrol import PluginControl
+from interface.plugincontrol import PluginControl
 import sys
-import widgets
-
+import interface.widgets as widgets
 
 __version__ = "0.1.0"
+
 
 class MainWindow(QMainWindow):
 
@@ -29,41 +29,33 @@ class MainWindow(QMainWindow):
 
         self.menubar = QMenuBar(self)
 
-        self.menuFile = QMenu("&File",self.menubar)
-        self.actionBuild = QAction("Build &Core",self)
+        self.menuFile = QMenu("&File", self.menubar)
+        self.actionBuild = QAction("Build &Core", self)
         self.actionBuild.triggered.connect(self.build_core)
-        #self.connect(self.actionBuild, pyqtSignal("triggered()"), self.build_core)
-        self.actionSaveImg = QAction("Save Core &Image",self)
+        self.actionSaveImg = QAction("Save Core &Image", self)
         self.actionSaveImg.triggered.connect(self.save_img)
-        #self.connect(self.actionSaveImg, SIGNAL("triggered()"), self.save_img)
-        self.actionExit = QAction("E&xit",self)
+        self.actionExit = QAction("E&xit", self)
         self.actionExit.triggered.connect(self.close)
-        #self.connect(self.actionExit, SIGNAL("triggered()"), self.close)
-        self.menuFile.addActions([self.actionBuild,self.actionSaveImg,self.actionExit])
+        self.menuFile.addActions([self.actionBuild, self.actionSaveImg, self.actionExit])
         self.menuFile.insertSeparator(self.actionExit)
 
-        self.menuSettings = QMenu("&Settings",self.menubar)
-        self.actionEval = QAction("&Evaluator Settings",self)
+        self.menuSettings = QMenu("&Settings", self.menubar)
+        self.actionEval = QAction("&Evaluator Settings", self)
         self.actionEval.triggered.connect(self.evaluator_settings)
-        #self.connect(self.actionEval, SIGNAL("triggered()"), self.evaluator_settings)
-        self.actionObjective = QAction("&Objective Settings",self)
+        self.actionObjective = QAction("&Objective Settings", self)
         self.actionObjective.triggered.connect(self.objective_settings)
-        #self.connect(self.actionObjective, SIGNAL("triggered()"), self.objective_settings)
-        self.actionCore = QAction("&Core Display Settings",self)
+        self.actionCore = QAction("&Core Display Settings", self)
         self.actionCore.triggered.connect(self.core_display_settings)
-        #self.connect(self.actionCore, SIGNAL("triggered()"), self.core_display_settings)
-        self.menuSettings.addActions([self.actionEval,self.actionObjective,self.actionCore])
+        self.menuSettings.addActions([self.actionEval, self.actionObjective, self.actionCore])
 
-        self.menuTools = QMenu("&Tools",self.menubar)
-        self.actionOptimize = QAction("&Run Optimization",self)
+        self.menuTools = QMenu("&Tools", self.menubar)
+        self.actionOptimize = QAction("&Run Optimization", self)
         self.actionOptimize.triggered.connect(self.run_optimization)
-        #self.connect(self.actionOptimize, SIGNAL("triggered()"), self.run_optimization)
         self.menuTools.addActions([self.actionOptimize])
 
-        self.menuHelp = QMenu("&Help",self.menubar)
-        self.actionAbout = QAction("&About",self)
+        self.menuHelp = QMenu("&Help", self.menubar)
+        self.actionAbout = QAction("&About", self)
         self.actionAbout.triggered.connect(self.about)
-        #self.connect(self.actionAbout, SIGNAL("triggered()"), self.about)
         self.menuHelp.addActions([self.actionAbout])
 
         self.menubar.addActions([self.menuFile.menuAction(),
@@ -71,7 +63,6 @@ class MainWindow(QMainWindow):
                                  self.menuTools.menuAction(),
                                  self.menuHelp.menuAction()])
         self.setMenuBar(self.menubar)
-
 
         # Instantiate widgets
 
@@ -85,7 +76,7 @@ class MainWindow(QMainWindow):
 
         # Setup widget layouts
 
-        self.plotKeff.setMinimumSize(400,400)
+        self.plotKeff.setMinimumSize(400, 400)
         rightLayout = QHBoxLayout()
         tabsPlot = QTabWidget()
         tabsPlot.addTab(self.plotKeff, "keff")
@@ -102,7 +93,7 @@ class MainWindow(QMainWindow):
         leftVertSplit.setOrientation(Qt.Vertical)
         rightVertSplit.setOrientation(Qt.Vertical)
 
-        self.coreDisplay.setMinimumSize(400,400)
+        self.coreDisplay.setMinimumSize(400, 400)
         leftVertSplit.addWidget(self.coreDisplay)
         leftVertSplit.addWidget(self.logView)
 
@@ -115,30 +106,23 @@ class MainWindow(QMainWindow):
 
         # this file is the controller, which handles the interplay between the
         # model and the views
-
         # connections to the views
 
-        #self.connect(self.coreDisplay,SIGNAL("assemblySwapped"),self.assembly_swap)
-        ##self.triggered.connect(self.assembly_swap)
-        #self.connect(self.allPatterns,SIGNAL("patternChanged(QVariant)"),self.change_pattern)
-        
-        self.closed = pyqtSignal()
-        self.closed.trigger.connect(self.assembly_swap)
-
         # connections to the model
-
-        #self.connect(self.model,SIGNAL("reactorChanged()"),self.new_reactor)
-        #self.connect(self.model,SIGNAL("reactorEvaluated()"),self.new_evaluation)
-        #self.connect(self.model,SIGNAL("patternChanged()"),self.pattern_changed)
-
         
 ################################################################################
 #  Menu Slots
 ################################################################################
 
     def build_core(self):
-      pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"reactor")
-      form = PluginControl(self.model,pluginDir,self)
+      file = QFileDialog.getOpenFileName(self, 'Open File', '$home')
+      path = file[0].split("/")
+      file = path[-1]
+      path = '/'.join(path[:-1])
+      sys.path.append(path)
+      #os.path.join(os.path.join(path, "plugins"), "reactor")
+      #pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "reactor")
+      form = PluginControl(self.model, file, self)
       form.set_help("""<html>
 <head>
 <title>       </title>
@@ -163,7 +147,10 @@ simple HTML and CSS.</p>
 </body>
 </html>""")
       form.show()
-    
+      
+      self.reactor_data = form.data()
+      self.new_reactor()
+          
     def save_img(self):
       filename = QFileDialog.getSaveFileName(self, "Save Core Image", "./",
                                                "PNG Files (*.png)")
@@ -173,23 +160,23 @@ simple HTML and CSS.</p>
         self.coreDisplay.save_image(filename)
     
     def evaluator_settings(self):
-      pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"evaluator")
-      form = PluginControl(self.model,pluginDir,self)
+      pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "evaluator")
+      form = PluginControl(self.model, pluginDir, self)
       form.set_help("""Evaluator Settings Help""")
       form.show()
       
     def objective_settings(self):
-      pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"objective")
-      form = PluginControl(self.model,pluginDir,self)
+      pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "objective")
+      form = PluginControl(self.model, pluginDir, self)
       form.set_help("""Evaluator Settings Help""")
       form.show()
     
     def core_display_settings(self):
     
-      choices = ["Burnup","Enrichment","Power Peaking","K-Infinity"]
-      choice,ok = QInputDialog.getItem(self,"Core Display Coloring",
+      choices = ["Burnup", "Enrichment", "Power Peaking", "K-Infinity"]
+      choice, ok = QInputDialog.getItem(self, "Core Display Coloring",
                                        "Choose how to display core",
-                                       choices,0,False)
+                                       choices, 0, False)
       if ok:
         if choice == "Burnup":
           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_BURNUP)
@@ -201,32 +188,28 @@ simple HTML and CSS.</p>
           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_KINF)
         self.coreDisplay.pattern_updated()
 
-
     def run_optimization(self):
-      pluginDir = os.path.join(os.path.join(sys.path[0],"plugins"),"optimizer")
-      form = PluginControl(self.model,pluginDir,self)
+      pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "optimizer")
+      form = PluginControl(self.model, pluginDir, self)
       form.set_help("""Optimizer Help""")
       form.show()
-
 
 ################################################################################
 #  View Slots - for views that need to interact with the model
 ################################################################################
 
-    def assembly_swap(self,toFrom):
+    def assembly_swap(self, toFrom):
         """Slot called on manual swap from the core display widget"""
-        self.model.swap_assemblies(toFrom[0],toFrom[1])
+        self.model.swap_assemblies(toFrom[0], toFrom[1])
         self.model.evaluate_reactor()
-
 
     def change_pattern(self, index):
         """Slot for when a pattern list item is clicked"""
         
-        if isinstance(index,QVariant):
+        if isinstance(index, QVariant):
             index = index.toPyObject()
 
         self.model.change_to_pattern(index)
-        
 
 ################################################################################
 #  Model Slots - for updating views when the model changes
@@ -235,25 +218,25 @@ simple HTML and CSS.</p>
     def new_reactor(self):
       """Do a full reset on the gui with a new starting core pattern"""
       
-      self.plotObjective.clear()
-      self.plotPeaking.clear()
-      self.plotKeff.clear()
-      self.allPatterns.clear()
-      self.savedPatterns.clear()
-      
-      self.coreDisplay.set_core(self.model.get_core())
-      self.model.evaluate_reactor()
+      #self.plotObjective.clear()
+      #self.plotPeaking.clear()
+      #self.plotKeff.clear()
+      #self.allPatterns.clear()
+      #self.savedPatterns.clear()
+      # TODO Make sure this works self.reactor_data.core
+      self.coreDisplay.set_core(self.reactor_data.core)
+      self.coreDisplay.draw_core(self.reactor_data.stencil, self.reactor_data.assemblies, self.reactor_data.solver.assembly_powers())
+      #self.model.evaluate_reactor()
 
-      self.allPatterns.resize()
-      self.savedPatterns.resize()
-      
+      #self.allPatterns.resize()
+      #self.savedPatterns.resize()
 
     def new_evaluation(self):
       """Update the pattern list, the plots, and any printouts with the new data"""
 
-      i,latest = self.model.get_latest_pattern()
+      i, latest = self.model.get_latest_pattern()
       
-      self.allPatterns.add_pattern( i,
+      self.allPatterns.add_pattern(i,
                                     latest['timestamp'],
                                     latest['pattern'],
                                     latest['keff'],
@@ -263,7 +246,6 @@ simple HTML and CSS.</p>
       self.plotPeaking.add_point(latest['maxpeak'])
       self.plotKeff.add_point(latest['keff'])
       self.plotObjective.add_point(latest['objective'])
-
 
     def pattern_changed(self):
         """Slot called whenever the current pattern of the Reactor is changed"""
@@ -280,9 +262,10 @@ simple HTML and CSS.</p>
                           """<b>Py-Image PWR Core Optimization Interface</b> v %s
                           <p>Copyright &copy; 2012 Nick Horelik, Jeremy Roberts, 
                           All Rights Reserved.
-                          <p>Python %s -- Qt %s -- PyQt %s on %s""" %
+                          <p>Python %s -- Qt %s -- PyQt %s on %s""" % 
                           (__version__, platform.python_version(),
                            QT_VERSION_STR, PYQT_VERSION_STR, platform.system()))
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

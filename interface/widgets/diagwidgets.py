@@ -20,19 +20,15 @@ class LinkText(QWidget):
 
         self.setLayout(lay)
 
-        #self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.textChanged)
-        #self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.textChanged2)
 
     def text(self):
         return self.line.text()
 '''
     @pyqtSignature("textChanged(QLabel,QLabel)")
     def textChanged(self,text):
-        self.emit(SIGNAL("textChanged(QLabel,QLabel)"),self.name,text)
 
     @pyqtSignature("textChanged()")
     def textChanged2(self,text):
-        self.emit(SIGNAL("textChanged()"))
 
     def setText(self,txt):
         self.line.setText(str(txt))
@@ -52,8 +48,6 @@ class FileChooser(QWidget):
         layout.addWidget(self.line)
         layout.addWidget(self.btn)
 
-        self.connect(self.btn,SIGNAL("clicked()"),self.chooser)
-        self.connect(self.line,SIGNAL("textChanged(QLabel)"),self.pathChanged)
 
     def chooser(self):
         if not self.dir and not self.save:
@@ -66,7 +60,6 @@ class FileChooser(QWidget):
 '''
     @pyqtSignature("pathChanged(QLabel)")
     def pathChanged(self):
-        self.emit(SIGNAL("pathChanged(QLabel)"),self.line.text())
 
     def getText(self):
         return self.line.text()
@@ -96,11 +89,6 @@ class ProgressBarButton(QPushButton):
         self.progress.setMinimumDuration(0)
         self.progress.setWindowModality(Qt.WindowModal)
 
-        self.connect(self.controller,SIGNAL("progressChanged(int)"),self.updateProgress)
-        self.connect(self.progress,SIGNAL("canceled()"),self.controller,SLOT("cancel()"))
-        self.connect(worker,SIGNAL("error()"),self.error)
-        self.connect(worker,SIGNAL("finished()"),self.progress,SIGNAL("cancel()"))
-
         self.progress.setValue(0)
         worker.start()
 
@@ -126,5 +114,4 @@ class Worker(QThread):
             getattr(self.controller,self.func)()  # where the run method in the plugin is called
             self.controller.progressChanged(100)
         except:
-            self.emit(SIGNAL("error()"))
             raise
