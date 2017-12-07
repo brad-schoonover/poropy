@@ -66,7 +66,7 @@ class MainWindow(QMainWindow):
 
         # Instantiate widgets
 
-        self.coreDisplay = widgets.CoreDisplay(None)
+        self.coreDisplay = widgets.CoreDisplay()
         self.plotObjective = widgets.PlotWidget()
         self.plotKeff = widgets.PlotWidget()
         self.plotPeaking = widgets.PlotWidget()
@@ -146,7 +146,7 @@ simple HTML and CSS.</p>
 
 </body>
 </html>""")
-      form.show()
+      #form.show()
       
       self.reactor_data = form.data()
       self.new_reactor()
@@ -157,7 +157,7 @@ simple HTML and CSS.</p>
       if filename:
         if not str(filename[-4:]).lower() == '.png':
           filename = str(filename) + ".png"
-        self.coreDisplay.save_image(filename)
+        #self.coreDisplay.save_image(filename)
     
     def evaluator_settings(self):
       pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "evaluator")
@@ -177,16 +177,16 @@ simple HTML and CSS.</p>
       choice, ok = QInputDialog.getItem(self, "Core Display Coloring",
                                        "Choose how to display core",
                                        choices, 0, False)
-      if ok:
-        if choice == "Burnup":
-          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_BURNUP)
-        elif choice == "Enrichment":
-          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_ENRICHMENT)
-        elif choice == "Power Peaking":
-          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_POWER)
-        elif choice == "K-Infinity":
-          self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_KINF)
-        self.coreDisplay.pattern_updated()
+#       if ok:
+#         if choice == "Burnup":
+#           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_BURNUP)
+#         elif choice == "Enrichment":
+#           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_ENRICHMENT)
+#         elif choice == "Power Peaking":
+#           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_POWER)
+#         elif choice == "K-Infinity":
+#           self.coreDisplay.set_coloring(widgets.CoreDisplay.COLOR_KINF)
+#         self.coreDisplay.pattern_updated()
 
     def run_optimization(self):
       pluginDir = os.path.join(os.path.join(sys.path[0], "plugins"), "optimizer")
@@ -224,8 +224,9 @@ simple HTML and CSS.</p>
       #self.allPatterns.clear()
       #self.savedPatterns.clear()
       # TODO Make sure this works self.reactor_data.core
-      self.coreDisplay.set_core(self.reactor_data.core)
-      self.coreDisplay.draw_core(self.reactor_data.stencil, self.reactor_data.assemblies, self.reactor_data.solver.assembly_powers())
+      self.coreDisplay.build(self.reactor_data.stencil)
+      #self.coreDisplay.set_core(self.reactor_data.core)
+      #self.coreDisplay.draw_core(self.reactor_data.stencil, self.reactor_data.assemblies, self.reactor_data.solver.assembly_powers())
       #self.model.evaluate_reactor()
 
       #self.allPatterns.resize()
