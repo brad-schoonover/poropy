@@ -7,18 +7,23 @@ class AssemblyDisplay(QGraphicsItem):
         super(AssemblyDisplay, self).__init__()
         self.w = w
         self.h = h
+        self.text = text
         #dragenterevent
         self.setPos(self.mapFromParent(QPointF(pos)))
+        self.pos = pos
         self.setFlags((QGraphicsItem.ItemIsMovable|QGraphicsItem.ItemIsSelectable))
         self.make_labels(text)
         
     def make_labels(self, text):
         label = QGraphicsTextItem(parent=self)
-        label.setPlainText("hello")
+        label.setPlainText(self.text)
     
     def boundingRect(self):
-        return QRectF(0, 0, 75, 75)
+        return QRectF(0, 0, self.w, self.h)
     
     def paint(self, painter, option, widget):
         painter.setPen(Qt.black)
         painter.drawRect(self.boundingRect())
+        
+    def position(self):
+        return self.pos

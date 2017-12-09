@@ -93,7 +93,7 @@ class MainWindow(QMainWindow):
         leftVertSplit.setOrientation(Qt.Vertical)
         rightVertSplit.setOrientation(Qt.Vertical)
 
-        self.coreDisplay.setMinimumSize(400, 400)
+        self.coreDisplay.setMinimumSize(600, 500)
         leftVertSplit.addWidget(self.coreDisplay)
         leftVertSplit.addWidget(self.logView)
 
