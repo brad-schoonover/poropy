@@ -224,7 +224,7 @@ simple HTML and CSS.</p>
       #self.allPatterns.clear()
       #self.savedPatterns.clear()
       # TODO Make sure this works self.reactor_data.core
-      self.coreDisplay.build(self.reactor_data.stencil)
+      self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu)
       #self.coreDisplay.set_core(self.reactor_data.core)
       #self.coreDisplay.draw_core(self.reactor_data.stencil, self.reactor_data.assemblies, self.reactor_data.solver.assembly_powers())
       #self.model.evaluate_reactor()
