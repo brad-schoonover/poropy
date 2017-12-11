@@ -9,12 +9,11 @@ class AssemblyDisplay(QGraphicsItem):
         self.h = h
         self.text = text
         #dragenterevent
-        self.setPos(self.mapFromParent(QPointF(pos)))
-        self.pos = pos
+        self.setPosition(pos)
         self.setFlags((QGraphicsItem.ItemIsMovable|QGraphicsItem.ItemIsSelectable))
-        self.make_labels(text)
+        self.make_labels()
         
-    def make_labels(self, text):
+    def make_labels(self):
         label = QGraphicsTextItem(parent=self)
         label.setPlainText(self.text)
     
@@ -25,5 +24,7 @@ class AssemblyDisplay(QGraphicsItem):
         painter.setPen(Qt.black)
         painter.drawRect(self.boundingRect())
         
-    def position(self):
-        return self.pos
+    def setPosition(self, pos):
+        print(pos)
+        self.setPos(self.mapFromParent(QPointF(pos)))
+        

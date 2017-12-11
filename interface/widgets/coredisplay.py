@@ -22,36 +22,51 @@ class CoreDisplay(QGraphicsView):
         
     def build(self, stencil):
         # grabbing the rows and columns of the data
-        self.num_rows = len(stencil)
-        self.num_cols = len(stencil[0])
-        self.dx = self.w / self.num_cols
-        self.dy = self.h / self.num_rows
+        self.numRows = len(stencil)
+        self.numCols = len(stencil[0])
+        self.dx = self.w / self.numCols
+        self.dy = self.h / self.numRows
         
-        self.items = []
-        for i in range(self.num_cols):
-            sub_items = []
-            for j in range(self.num_rows):
-                # Creates the individual class and puts into a list, of AssemblyDispaly
-                item = AD("hello{}{}".format(i, j), QPoint(i * self.dx, j * self.dy), self.dx, self.dy)
-                sub_items.append(item)
-                self.scene().addItem(sub_items[j])
-            # Creates List of list
-            self.items.append(sub_items)
-            
-    def mouseMoveEvent(self, event):
-        # Creataing a new mouse event with old functionallity, along with new
-        super(CoreDisplay, self).mouseMoveEvent(event)
+        # Creating the locations map for the AssemblyDispaly Information
+        self.locations = [[(i,j) for j in range(self.numCols)] for i in range(self.numRows)]
+        
+        self.update()
             
     def mousePressEvent(self, event):
         # Creataing a new mouse event with old functionallity, along with new
         super(CoreDisplay, self).mousePressEvent(event)
         # block location
-        self.xSelected = int(event.pos().x() / self.w * (self.num_cols))
-        self.ySelected = int(event.pos().y() / self.h * (self.num_rows))
+        self.xSel = int(event.pos().x() / self.w * (self.numCols))
+        self.ySel = int(event.pos().y() / self.h * (self.numRows))
         
     def mouseReleaseEvent(self, event):
         # Creataing a new mouse event with old functionallity, along with new
         super(CoreDisplay, self).mouseReleaseEvent(event)
-        # grabs the postition in the list for held
-        
         # grabs the postition in the list for groud item
+        self.xRel = int(event.pos().x() / self.w * (self.numCols))
+        self.yRel = int(event.pos().y() / self.h * (self.numRows))
+        
+        print(self.xRel, self.yRel, self.xSel, self.ySel)
+        
+        # switch the positions
+        loc1 = (self.xSel, self.ySel)
+        loc2 = (self.xRel, self.yRel)
+        self.locations[self.xSel][self.ySel], self.locations[self.xRel][self.yRel] = loc2, loc1
+        
+        self.update()
+        
+        print("Updated Boxes")
+        #self.items[self.xSel][self.ySel].update()
+        #self.items[self.xRel][self.yRel].update()
+        
+    def update(self):
+        super(CoreDisplay, self).update()
+        self.myScence.clear()
+        for i in range(self.numCols):
+            for j in range(self.numRows):
+                # 
+                x,y = self.locations[i][j]
+                print(i,j,x,y)
+                item = AD("hello{}{}".format(x, y), QPoint(i * self.dx, j * self.dy), self.dx, self.dy)
+                self.scene().addItem(item)
+            
