@@ -3,10 +3,8 @@ from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtWidgets import QGraphicsItem, QLabel, QGridLayout, QGraphicsTextItem
 
 class AssemblyDisplay(QGraphicsItem):
-    def __init__(self, text=None, pos=None, w=None, h=None, indicator=None, burnUp=None, color=None):
+    def __init__(self, text=None, pos=None, w=None, h=None, color=None):
         super(AssemblyDisplay, self).__init__()
-        self.indicator = indicator
-        self.burnUp = burnUp
         self.w = w
         self.h = h
         self.text = text

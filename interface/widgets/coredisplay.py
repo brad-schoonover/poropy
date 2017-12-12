@@ -6,6 +6,7 @@ from PyQt5.QtCore import QPoint, QMimeData, Qt
 import matplotlib.colors as color
 import matplotlib.cm as cmx
 import matplotlib.pyplot as plt
+from poropy_core.src.poropy_core import Assembly
 
 
 class CoreDisplay(QGraphicsView):
@@ -22,8 +23,13 @@ class CoreDisplay(QGraphicsView):
         self.fitInView(0, 0, self.w, self.h)
         self.setScene(self.myScence)
         
-    def build(self, stencil, bu):
+    def build(self, stencil, bu, core):
         self.stencil = stencil
+        self.core = core
+        print(core.assembly(0).serial_number())
+        print(core.assembly(0).type())
+        print(core.assembly(0).mass())
+        print(core.assembly(0).burnup())
         self.bu = [[bu[ss] if ss >= 0 else None for ss in s] for s in stencil]
         self.getColorMap()
         # grabbing the rows and columns of the data
@@ -33,7 +39,10 @@ class CoreDisplay(QGraphicsView):
         self.dy = self.h / self.numRows
         
         # Creating the locations map for the AssemblyDispaly Information
-        self.locations = [[(i,j) for j in range(self.numCols)] for i in range(self.numRows)]
+        self.locations = [[(i,j) for i in range(self.numCols)] for j in range(self.numRows)]
+#         for i in range(self.numCols):
+#             for j in range(self.numRows):
+#                 self.locations[i][j] = (i,j)
         
         self.update()
             
@@ -55,21 +64,21 @@ class CoreDisplay(QGraphicsView):
         # switch the positions
         loc1 = (self.xSel, self.ySel)
         loc2 = (self.xRel, self.yRel)
-        self.locations[self.xSel][self.ySel], self.locations[self.xRel][self.yRel] = loc2, loc1
+        self.locations[self.xSel][self.ySel], self.locations[self.xRel][self.yRel] = self.locations[self.xRel][self.yRel], self.locations[self.xSel][self.ySel]
         
         self.update()
         
     def getColorMap(self):
         cmap = plt.get_cmap('viridis')
 
-        cNorm = color.Normalize(vmin=0, vmax=100)
+        cNorm = color.Normalize(vmin=-50, vmax=50)
         self.scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=cmap)
 
     def update(self):
         super(CoreDisplay, self).update()
         self.myScence.clear()
-        for i in range(self.numRows):
-            for j in range(self.numCols):
+        for i in range(self.numCols):
+            for j in range(self.numRows):
                 # 
                 x,y = self.locations[i][j]
                 if self.bu[x][y] is None:
@@ -77,6 +86,6 @@ class CoreDisplay(QGraphicsView):
                 else:
                     c = [int(mm * 255) for mm in self.scalarMap.to_rgba(self.bu[x][y])[:-1]]
                 color = QColor(*c)
-                item = AD("hello{}{}\n{}".format(x, y, self.bu[x][y]), QPoint(j * self.dx, i * self.dy), self.dx, self.dy, self.stencil[x][y], self.bu[x][y], color)
+                item = AD("{}{}\n{}".format(x, y, self.bu[x][y]), QPoint(i * self.dx, j * self.dy), self.dx, self.dy, color)
                 self.scene().addItem(item)
             

@@ -218,19 +218,9 @@ simple HTML and CSS.</p>
     def new_reactor(self):
       """Do a full reset on the gui with a new starting core pattern"""
       
-      #self.plotObjective.clear()
-      #self.plotPeaking.clear()
-      #self.plotKeff.clear()
-      #self.allPatterns.clear()
-      #self.savedPatterns.clear()
-      # TODO Make sure this works self.reactor_data.core
-      self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu)
-      #self.coreDisplay.set_core(self.reactor_data.core)
-      #self.coreDisplay.draw_core(self.reactor_data.stencil, self.reactor_data.assemblies, self.reactor_data.solver.assembly_powers())
-      #self.model.evaluate_reactor()
-
-      #self.allPatterns.resize()
-      #self.savedPatterns.resize()
+      # TODO: Make sure this works self.reactor_data.core
+      # TODO: Delete duplicate data (stencil vs core)
+      self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu, self.reactor_data.core)
 
     def new_evaluation(self):
       """Update the pattern list, the plots, and any printouts with the new data"""
