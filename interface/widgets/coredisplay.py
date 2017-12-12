@@ -30,7 +30,7 @@ class CoreDisplay(QGraphicsView):
         print(core.assembly(0).type())
         print(core.assembly(0).mass())
         print(core.assembly(0).burnup())
-        self.bu = [[bu[ss] if ss >= 0 else None for ss in s] for s in stencil]
+        #self.bu = [[bu[ss] if ss >= 0 else None for ss in s] for s in stencil]
         self.getColorMap()
         # grabbing the rows and columns of the data
         self.numRows = len(self.stencil)
@@ -38,11 +38,11 @@ class CoreDisplay(QGraphicsView):
         self.dx = self.w / self.numCols
         self.dy = self.h / self.numRows
         
-        # Creating the locations map for the AssemblyDispaly Information
-        self.locations = [[(i,j) for i in range(self.numCols)] for j in range(self.numRows)]
+        # Creating the stencil map for the AssemblyDispaly Information
+        #self.stencil = [[(i,j) for i in range(self.numCols)] for j in range(self.numRows)]
 #         for i in range(self.numCols):
 #             for j in range(self.numRows):
-#                 self.locations[i][j] = (i,j)
+#                 self.stencil[i][j] = (i,j)
         
         self.update()
             
@@ -64,7 +64,7 @@ class CoreDisplay(QGraphicsView):
         # switch the positions
         loc1 = (self.xSel, self.ySel)
         loc2 = (self.xRel, self.yRel)
-        self.locations[self.xSel][self.ySel], self.locations[self.xRel][self.yRel] = self.locations[self.xRel][self.yRel], self.locations[self.xSel][self.ySel]
+        self.stencil[self.ySel][self.xSel], self.stencil[self.yRel][self.xRel] = self.stencil[self.yRel][self.xRel], self.stencil[self.ySel][self.xSel]
         
         self.update()
         
@@ -80,12 +80,21 @@ class CoreDisplay(QGraphicsView):
         for i in range(self.numCols):
             for j in range(self.numRows):
                 # 
-                x,y = self.locations[i][j]
-                if self.bu[x][y] is None:
-                    c = [0, 0, 0]
+                index = self.stencil[j][i]
+                if index < 0:
+                    # -20 is an index that does not exist in our test cases, therefore will always be a different color
+                    c = [int(mm * 255) for mm in self.scalarMap.to_rgba(-20)[:-1]]
+                    ass = None
                 else:
-                    c = [int(mm * 255) for mm in self.scalarMap.to_rgba(self.bu[x][y])[:-1]]
+                    ass = self.core.assembly(index)
+                    c = [int(mm * 255) for mm in self.scalarMap.to_rgba(ass.burnup())[:-1]]
                 color = QColor(*c)
-                item = AD("{}{}\n{}".format(x, y, self.bu[x][y]), QPoint(i * self.dx, j * self.dy), self.dx, self.dy, color)
+                text = self.getText(ass)
+                item = AD(text, QPoint(i * self.dx, j * self.dy), self.dx, self.dy, color)
                 self.scene().addItem(item)
+                
+    def getText(self, ass):
+        if not ass:
+            return "R"
+        return "\n".join([str(i) for i in [ass.serial_number(), ass.type(), ass.mass(), ass.burnup()]])
             
