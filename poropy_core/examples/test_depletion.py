@@ -59,6 +59,17 @@ solver.set_temperatures([TF1]*49, [580.]*49)
 # exit('lala')
 
 solver.solve()
+
+def get_appf(p):
+  appf = np.array(p)
+  return list(appf / np.mean(appf))
+
+def initialize():
+  solver = FlareSolver(db, core, model, 3.400)
+  solver.set_burnup_steps(list(np.ones(30)*1.0))
+  TF1 = 900.0
+  solver.set_temperatures([TF1]*49, [580.]*49)
+  return solver
 #print((solver.fuel_temperature()))
 #print((solver.moderator_temperature()))
 print("finish import")

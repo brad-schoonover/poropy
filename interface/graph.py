@@ -37,10 +37,6 @@ class Chart(FigureCanvas):
         self.axes.set_xlim(axisLim[:2])
         self.axes.set_ylim(axisLim[2:])
         self.axes.set_xticks(linspace(axisLim[0], axisLim[1], 3))
-        if temp:
-            self.axes.set_yticklabels(linspace(axisLim[2], axisLim[3], 6).astype(int))
-        else:
-            self.axes.set_yticks(linspace(axisLim[2], axisLim[3], 6))
 
         # Add a legend if provided
         if legend is not None:
@@ -54,7 +50,9 @@ class Chart(FigureCanvas):
 
     # Creating graphs
     def updateFigure(self, data):
+        dy = 0.001
         self.lines[0].set_ydata(data)
+        self.axes.set_ylim([min(data) - dy, max(data) + dy])
         l = len(data)
         self.axes.set_xlim([0, l])
         self.axes.set_xticks(range(l))

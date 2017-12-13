@@ -73,7 +73,6 @@ class CoreDisplay(QGraphicsView):
         loc2 = (self.xRel, self.yRel)
         self.stencil[self.ySel][self.xSel], self.stencil[self.yRel][self.xRel] = self.stencil[self.yRel][self.xRel], self.stencil[self.ySel][self.xSel]
         
-        # makes an empty pattern set
         self.pattern = []
         
         #fill pattern based on numbers being greater than zero and no duplicates
@@ -86,7 +85,6 @@ class CoreDisplay(QGraphicsView):
         
         #giving physics new values, and recalculating
         self.core.set_pattern(self.pattern)
-        self.solver.solve()
         
         self.update()
         self.updateSignal.emit()

@@ -222,7 +222,7 @@ simple HTML and CSS.</p>
     def new_reactor(self):
       """Do a full reset on the gui with a new starting core pattern"""
       self.data.append(self.reactor_data.solver.cycle_keff()[0])
-      self.power = self.reactor_data.solver.assembly_powers()
+      self.power = self.get_appf(self.reactor_data.solver.assembly_powers())
       self.maxPeak = max(self.power)/(sum(self.power)/len(self.power))
       
       # TODO: Make sure this works self.reactor_data.core
@@ -268,11 +268,17 @@ simple HTML and CSS.</p>
         
     def update(self):
         super(MainWindow, self).update()
+        self.solver = self.reactor_data.initialize()
+        self.solver.solve()
         self.plotKeff.updateFigure(self.data)
-        self.data.append(self.reactor_data.solver.cycle_keff()[0])
-        print(self.data)
-        self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.reactor_data.solver.cycle_keff()[0], self.maxPeak, 0)
-        print("hello")
+        self.data.append(self.solver.cycle_keff()[0])
+        self.power = self.get_appf(self.solver.assembly_powers())
+        self.maxPeak = max(self.power)/(sum(self.power)/len(self.power))
+        self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.solver.cycle_keff()[0], self.maxPeak, 0)
+        
+    def get_appf(self, p):
+        appf = np.array(p)
+        return list(appf / np.mean(appf))
 
 
 if __name__ == "__main__":
