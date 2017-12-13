@@ -67,10 +67,18 @@ class CoreDisplay(QGraphicsView):
         self.xRel = int(event.pos().x() / self.w * (self.numCols))
         self.yRel = int(event.pos().y() / self.h * (self.numRows))
         
+        # Creating a check flag to see if we are in the grid we are allowed to select or move a block too
+        check = True
+        if self.stencil[self.ySel][self.xSel] < 0:
+            check = False
+        elif self.stencil[self.yRel][self.xRel] < 0:
+            check = False
         
+        # If we are not in this grid we just redraw the grid
+        if not check:
+            self.update()
+            return
         # switch the positions
-        loc1 = (self.xSel, self.ySel)
-        loc2 = (self.xRel, self.yRel)
         self.stencil[self.ySel][self.xSel], self.stencil[self.yRel][self.xRel] = self.stencil[self.yRel][self.xRel], self.stencil[self.ySel][self.xSel]
         
         self.pattern = []
@@ -118,5 +126,6 @@ class CoreDisplay(QGraphicsView):
     def getText(self, ass, power):
         if not ass:
             return "R"
+        power = "{:6.4f}".format(power)
         return "\n".join([str(i) for i in [ass.serial_number(), ass.type(), ass.mass(), ass.burnup(), power]])
             

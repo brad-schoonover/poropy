@@ -1,4 +1,4 @@
-from PyQt5.QtGui import QPen, QPainter, QColor, QBrush
+from PyQt5.QtGui import QPen, QPainter, QColor, QBrush, QFont
 from PyQt5.QtCore import Qt, QRectF, QPointF
 from PyQt5.QtWidgets import QGraphicsItem, QLabel, QGridLayout, QGraphicsTextItem
 
@@ -12,12 +12,14 @@ class AssemblyDisplay(QGraphicsItem):
         self.color = color
         #dragenterevent
         self.setPosition(pos)
-        self.setFlags((QGraphicsItem.ItemIsMovable|QGraphicsItem.ItemIsSelectable))
+        if text != "R":
+            self.setFlags((QGraphicsItem.ItemIsMovable|QGraphicsItem.ItemIsSelectable))
         self.make_labels()
         
     def make_labels(self):
         label = QGraphicsTextItem(parent=self)
         label.setPlainText(self.text)
+        label.setFont(QFont("Times New Roman", 7))
     
     def boundingRect(self):
         return QRectF(0, 0, self.w, self.h)

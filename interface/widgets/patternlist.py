@@ -4,10 +4,11 @@ import copy
 
 
 class PatternList(QWidget):
-    def __init__(self,parent=None):
-        QWidget.__init__(self,parent)
 
-        headers = ["Maxpeak","keff","Objective","Pattern"]
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent)
+
+        headers = ["Time", "Maxpeak", "keff", "Objective", "Pattern"]
         self.numCols = 4
 
         self.display = QTreeWidget()
@@ -18,25 +19,26 @@ class PatternList(QWidget):
         l.addWidget(self.display)
         self.setLayout(l)
 
-    #def checkbox_clicked(self,item,col):
+    # def checkbox_clicked(self,item,col):
     #    if col != 4: return
     #    if item.checkState(col) == Qt.Checked:
     #        self.emit(SIGNAL("saveItem(QTreeWidgetItem*)"),item)
     #    else:
     #        self.emit(SIGNAL("unsaveItem(QTreeWidgetItem*)"),item)
     #
-    #def add_item(self,item):
+    # def add_item(self,item):
     #    self.display.addTopLevelItem(item)
 
-    #def remove_item(self,item):
+    # def remove_item(self,item):
     #    self.display.removeItemWidget(item,0)
 
-
-    def add_pattern(self,i,pattern,keff,maxpeak,objective):
-        text = [str(i) for i in [maxpeak, keff, objective, pattern]]
-        item = QTreeWidgetItem(self.display,text)
-        #item.setCheckState(4,Qt.Unchecked)
-        item.setData(0,32,i)
+    def add_pattern(self, date, i, pattern, keff, maxpeak, objective):
+        maxpeak = "{:6.4f}".format(maxpeak)
+        keff = "{:6.4f}".format(keff)
+        text = [str(i) for i in [date, maxpeak, keff, objective, pattern]]
+        item = QTreeWidgetItem(self.display, text)
+        # item.setCheckState(4,Qt.Unchecked)
+        item.setData(0, 32, i)
 
     def resize(self):
         for c in range(self.numCols):
@@ -44,8 +46,8 @@ class PatternList(QWidget):
 
     def change_pattern(self):
         try:
-          data = self.display.selectedItems()[0].data(0,32)
-        except IndexError: pass # selection was changed to nothing
+          data = self.display.selectedItems()[0].data(0, 32)
+        except IndexError: pass  # selection was changed to nothing
         
     def clear(self):
         self.display.clear()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from PyQt5.QtWidgets import QMenuBar, QMenu, QMainWindow, QAction, QSplitter, QMessageBox, QApplication, QHBoxLayout, QTabWidget, QFileDialog
-from PyQt5.QtCore import QObject, Qt, pyqtSignal
+from PyQt5.QtCore import QObject, Qt, pyqtSignal, QDate, QTime
 import copy
 from interface.model import Model
 import numpy as np
@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         self.model = Model()
         
         self.data = []
+        self.dataPeak = []
 
         # Add menu items
 
@@ -224,12 +225,15 @@ simple HTML and CSS.</p>
       self.data.append(self.reactor_data.solver.cycle_keff()[0])
       self.power = self.get_appf(self.reactor_data.solver.assembly_powers())
       self.maxPeak = max(self.power)/(sum(self.power)/len(self.power))
+      self.dataPeak.append(self.maxPeak)
+      time = QTime.currentTime()
+      time = time.toString(Qt.DefaultLocaleLongDate)
       
       # TODO: Make sure this works self.reactor_data.core
       # TODO: Delete duplicate data (stencil vs core)
       self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu, self.reactor_data.core, self.reactor_data.solver)
       self.plotKeff.updateFigure(self.data)
-      self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.reactor_data.solver.cycle_keff()[0], self.maxPeak, 0)
+      self.allPatterns.add_pattern(time, 0, self.coreDisplay.pattern, self.reactor_data.solver.cycle_keff()[0], self.maxPeak, 0)
 
     def new_evaluation(self):
       """Update the pattern list, the plots, and any printouts with the new data"""
@@ -274,7 +278,11 @@ simple HTML and CSS.</p>
         self.data.append(self.solver.cycle_keff()[0])
         self.power = self.get_appf(self.solver.assembly_powers())
         self.maxPeak = max(self.power)/(sum(self.power)/len(self.power))
-        self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.solver.cycle_keff()[0], self.maxPeak, 0)
+        self.plotPeaking.updateFigure(self.dataPeak)
+        self.dataPeak.append(self.maxPeak)
+        time = QTime.currentTime()
+        time = time.toString(Qt.DefaultLocaleLongDate)
+        self.allPatterns.add_pattern(time, 0, self.coreDisplay.pattern, self.solver.cycle_keff()[0], self.maxPeak, 0)
         
     def get_appf(self, p):
         appf = np.array(p)
