@@ -10,6 +10,7 @@ import platform
 from interface.plugincontrol import PluginControl
 import sys
 import interface.widgets as widgets
+from interface.graph import Chart
 
 __version__ = "0.1.0"
 
@@ -24,6 +25,8 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Poropy PWR Core Optimization Interface")
 
         self.model = Model()
+        
+        self.data = []
 
         # Add menu items
 
@@ -67,9 +70,10 @@ class MainWindow(QMainWindow):
         # Instantiate widgets
 
         self.coreDisplay = widgets.CoreDisplay()
-        self.plotObjective = widgets.PlotWidget()
-        self.plotKeff = widgets.PlotWidget()
-        self.plotPeaking = widgets.PlotWidget()
+        self.coreDisplay.updateSignal.connect(self.update)
+        self.plotObjective = Chart([0, 1, 0, 100], [0], self, legend=None, xlabel=None, ylabel=None, temp=False)
+        self.plotKeff = Chart([0, 1, 0, 2], [0], self, legend=None, xlabel=None, ylabel=None, temp=False)
+        self.plotPeaking = Chart([0, 1, 0, 100], [0], self, legend=None, xlabel=None, ylabel=None, temp=False)
         self.allPatterns = widgets.PatternList()
         self.savedPatterns = widgets.PatternList()
         self.logView = widgets.LogWatcher("output.log")
@@ -217,10 +221,15 @@ simple HTML and CSS.</p>
 
     def new_reactor(self):
       """Do a full reset on the gui with a new starting core pattern"""
+      self.data.append(self.reactor_data.solver.cycle_keff()[0])
+      self.power = self.reactor_data.solver.assembly_powers()
+      self.maxPeak = max(self.power)/(sum(self.power)/len(self.power))
       
       # TODO: Make sure this works self.reactor_data.core
       # TODO: Delete duplicate data (stencil vs core)
-      self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu, self.reactor_data.core)
+      self.coreDisplay.build(self.reactor_data.stencil, self.reactor_data.bu, self.reactor_data.core, self.reactor_data.solver)
+      self.plotKeff.updateFigure(self.data)
+      self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.reactor_data.solver.cycle_keff()[0], self.maxPeak, 0)
 
     def new_evaluation(self):
       """Update the pattern list, the plots, and any printouts with the new data"""
@@ -256,6 +265,14 @@ simple HTML and CSS.</p>
                           <p>Python %s -- Qt %s -- PyQt %s on %s""" % 
                           (__version__, platform.python_version(),
                            QT_VERSION_STR, PYQT_VERSION_STR, platform.system()))
+        
+    def update(self):
+        super(MainWindow, self).update()
+        self.plotKeff.updateFigure(self.data)
+        self.data.append(self.reactor_data.solver.cycle_keff()[0])
+        print(self.data)
+        self.allPatterns.add_pattern(0, self.coreDisplay.pattern, self.reactor_data.solver.cycle_keff()[0], self.maxPeak, 0)
+        print("hello")
 
 
 if __name__ == "__main__":

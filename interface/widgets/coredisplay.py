@@ -2,7 +2,7 @@ from interface.widgets.assemblydisplay import AssemblyDisplay as AD
 from PyQt5.QtWidgets import QGraphicsView, QGraphicsScene, QFrame, QGridLayout, \
     QLabel, QGraphicsItem
 from PyQt5.QtGui import QPainterPath, QDrag, QColor
-from PyQt5.QtCore import QPoint, QMimeData, Qt
+from PyQt5.QtCore import QPoint, QMimeData, Qt, pyqtSignal
 import matplotlib.colors as color
 import matplotlib.cm as cmx
 import matplotlib.pyplot as plt
@@ -10,6 +10,8 @@ from poropy_core.src.poropy_core import Assembly
 
 
 class CoreDisplay(QGraphicsView):
+    
+    updateSignal = pyqtSignal()
 
     def __init__(self, parent=None):
         super(CoreDisplay, self).__init__()
@@ -17,19 +19,17 @@ class CoreDisplay(QGraphicsView):
         self.myScence = QGraphicsScene()
         self.w = self.size().width()
         self.h = self.size().height()
+        self.pattern = []
         
         self.setFixedSize(self.w, self.h)
         self.myScence.setSceneRect(0, 0, self.w, self.h)
         self.fitInView(0, 0, self.w, self.h)
         self.setScene(self.myScence)
         
-    def build(self, stencil, bu, core):
+    def build(self, stencil, bu, core, solver):
+        self.solver = solver
         self.stencil = stencil
         self.core = core
-        print(core.assembly(0).serial_number())
-        print(core.assembly(0).type())
-        print(core.assembly(0).mass())
-        print(core.assembly(0).burnup())
         #self.bu = [[bu[ss] if ss >= 0 else None for ss in s] for s in stencil]
         self.getColorMap()
         # grabbing the rows and columns of the data
@@ -37,6 +37,13 @@ class CoreDisplay(QGraphicsView):
         self.numCols = len(self.stencil[0])
         self.dx = self.w / self.numCols
         self.dy = self.h / self.numRows
+        
+        for i in range(self.numCols):
+            for j in range(self.numRows):
+                if self.stencil[i][j] < 0 or stencil[i][j] in self.pattern:
+                    pass
+                else:
+                    self.pattern.append(self.stencil[i][j])
         
         # Creating the stencil map for the AssemblyDispaly Information
         #self.stencil = [[(i,j) for i in range(self.numCols)] for j in range(self.numRows)]
@@ -66,7 +73,23 @@ class CoreDisplay(QGraphicsView):
         loc2 = (self.xRel, self.yRel)
         self.stencil[self.ySel][self.xSel], self.stencil[self.yRel][self.xRel] = self.stencil[self.yRel][self.xRel], self.stencil[self.ySel][self.xSel]
         
+        # makes an empty pattern set
+        self.pattern = []
+        
+        #fill pattern based on numbers being greater than zero and no duplicates
+        for i in range(self.numCols):
+            for j in range(self.numRows):
+                if self.stencil[i][j] < 0 or self.stencil[i][j] in self.pattern:
+                    pass
+                else:
+                    self.pattern.append(self.stencil[i][j])
+        
+        #giving physics new values, and recalculating
+        self.core.set_pattern(self.pattern)
+        self.solver.solve()
+        
         self.update()
+        self.updateSignal.emit()
         
     def getColorMap(self):
         cmap = plt.get_cmap('viridis')
@@ -81,6 +104,7 @@ class CoreDisplay(QGraphicsView):
             for j in range(self.numRows):
                 # 
                 index = self.stencil[j][i]
+                power = self.solver.cycle_keff()
                 if index < 0:
                     # -20 is an index that does not exist in our test cases, therefore will always be a different color
                     c = [int(mm * 255) for mm in self.scalarMap.to_rgba(-20)[:-1]]
@@ -89,12 +113,12 @@ class CoreDisplay(QGraphicsView):
                     ass = self.core.assembly(index)
                     c = [int(mm * 255) for mm in self.scalarMap.to_rgba(ass.burnup())[:-1]]
                 color = QColor(*c)
-                text = self.getText(ass)
+                text = self.getText(ass, power[0])
                 item = AD(text, QPoint(i * self.dx, j * self.dy), self.dx, self.dy, color)
                 self.scene().addItem(item)
                 
-    def getText(self, ass):
+    def getText(self, ass, power):
         if not ass:
             return "R"
-        return "\n".join([str(i) for i in [ass.serial_number(), ass.type(), ass.mass(), ass.burnup()]])
+        return "\n".join([str(i) for i in [ass.serial_number(), ass.type(), ass.mass(), ass.burnup(), power]])
             

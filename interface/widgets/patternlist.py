@@ -7,7 +7,7 @@ class PatternList(QWidget):
     def __init__(self,parent=None):
         QWidget.__init__(self,parent)
 
-        headers = ["Timestamp","Maxpeak","keff","Objective","Pattern"]
+        headers = ["Maxpeak","keff","Objective","Pattern"]
         self.numCols = 4
 
         self.display = QTreeWidget()
@@ -32,14 +32,9 @@ class PatternList(QWidget):
     #    self.display.removeItemWidget(item,0)
 
 
-    def add_pattern(self,i,timestamp,pattern,keff,maxpeak,objective):
-        strlst = QStringListModel()
-        strlst.append(str(timestamp))
-        strlst.append(str(maxpeak))
-        strlst.append(str(keff))
-        strlst.append(str(objective))
-        strlst.append(str(pattern))
-        item = QTreeWidgetItem(self.display,strlst)
+    def add_pattern(self,i,pattern,keff,maxpeak,objective):
+        text = [str(i) for i in [maxpeak, keff, objective, pattern]]
+        item = QTreeWidgetItem(self.display,text)
         #item.setCheckState(4,Qt.Unchecked)
         item.setData(0,32,i)
 

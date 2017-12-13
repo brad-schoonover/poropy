@@ -55,7 +55,7 @@ solver.set_temperatures([TF1]*49, [580.]*49)
 # mean_T = (T[0] + 4*sum(T[1:]))/193.
 # print T
 # print "mean T = ", mean_T
-# print solver.keff()
+#print solver.keff()
 # exit('lala')
 
 solver.solve()
@@ -67,6 +67,7 @@ print("finish import")
 
 
 #keff1 = solver.cycle_keff(); 
+#print(keff1)
 #bu1 = solver.cycle_core_burnup()
 #mappf1 = solver.cycle_max_appf()
 #boron1 = solver.cycle_boron()
